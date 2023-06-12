@@ -1,0 +1,33 @@
+jenkins:
+  # securityRealm: # For extra lazy people
+  #   local:
+  #     users:
+  #       - id: "jd"
+  #         name: "John Doe"
+  #         password: "PASSWORD"
+  #         properties:
+  #           - mailer:
+  #               emailAddress: "example@mail.org"
+  clouds:
+    - docker:
+        name: "docker"
+        dockerApi:
+          dockerHost:
+            uri: "tcp://docker:2376"
+            credentialsId: "docker"
+        templates:
+          - labelString: "jenkins-agent"
+            dockerTemplateBase:
+              image: "jenkins/agent"
+            remoteFs: "/home/jenkins/agent"
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - x509ClientCert:
+              id: "docker"
+              scope: "SYSTEM"
+              description: "Dind certificate"
+              clientKeySecret: "${file:/certs/client/key.pem}"
+              clientCertificate: "${file:/certs/client/cert.pem}"
+              serverCaCertificate: "${file:/certs/client/ca.pem}"

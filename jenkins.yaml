@@ -14,6 +14,8 @@ jenkins:
   clouds:
     - docker:
         name: "docker"
+        disabled:
+          disabledByChoice: false
         dockerApi:
           dockerHost:
             uri: "tcp://docker:2376"
@@ -22,7 +24,13 @@ jenkins:
           - labelString: "jenkins-agent"
             dockerTemplateBase:
               image: "jenkins/agent"
+              cpuPeriod: 0
+              cpuQuota: 0
             remoteFs: "/home/jenkins/agent"
+            connector: "attach"
+            disabled:
+              disabledByChoice: false
+
 credentials:
   system:
     domainCredentials:

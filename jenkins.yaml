@@ -11,6 +11,7 @@ jenkins:
   #         properties:
   #           - mailer:
   #               emailAddress: "example@mail.org"
+  numExecutors: 0
   clouds:
     - docker:
         name: "docker"
@@ -23,14 +24,32 @@ jenkins:
         templates:
           - labelString: "jenkins-agent"
             dockerTemplateBase:
-              image: "jenkins/agent"
               cpuPeriod: 0
               cpuQuota: 0
+              image: "jenkins/agent"
             remoteFs: "/home/jenkins/agent"
-            connector: "attach"
-            disabled:
-              disabledByChoice: false
-
+            removeVolumes: true
+            connector:
+              attach:
+                user: "jenkins"
+          - connector:
+              attach:
+                user: "jenkins"
+            dockerTemplateBase:
+              cpuPeriod: 0
+              cpuQuota: 0
+              image: "felipecrs/jenkins-agent-dind"
+              privileged: true
+            labelString: "docker-agent"
+            name: "dind"
+            pullStrategy: PULL_ALWAYS
+            pullTimeout: 300
+            remoteFs: "/home/jenkins/agent"
+            removeVolumes: true
+unclassified:
+  location:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    url: "http://localhost:8080/"
 credentials:
   system:
     domainCredentials:
